@@ -1,44 +1,84 @@
 "use client";
 
-const url = "/api/login"
+import Image from "next/image";
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/components/authProvider";
+
+const url = "/api/login/";
 
 export default function Page() {
+  const auth = useAuth();
+
   async function handleSubmit(event) {
     event.preventDefault();
-
-    const formData = new FormData(event.target)
-    const objectData = Object.fromEntries(formData)
-    const jsonData = JSON.stringify(objectData)
+    const formData = new FormData(event.target);
+    const objectData = Object.fromEntries(formData);
+    const jsonData = JSON.stringify(objectData);
 
     const response = await fetch(url, {
-        method: "POST",
-        header: {
-            "Content-Type": "application/json"
-        },
-        body: jsonData
-    })
-
-    const rData = await response.json()
-    if(response.ok){
-        console.log(rData)
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+      },
+      body: jsonData,
+    });
+    const rData = await response.json();
+    if (response.ok) {
+      auth.login();
     }
-    console.log("submitted");
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-24">
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input type="text" name="username" id="" placeholder="Username" />
+    <div className="w-full lg:grid lg:min-h-[85vh] lg:grid-cols-2 xl:min-h-[90vh]">
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold">Login</h1>
+          </div>
+          <div className="grid gap-4 m-2">
+            <form onSubmit={handleSubmit}>
+              <div className="grid gap-2">
+                <Label htmlFor="username">Username: </Label>
+                <Input
+                  id="username"
+                  type="username"
+                  name="username"
+                  placeholder="username"
+                  required
+                />
+              </div>
+              <div className="grid gap-2 m-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                </div>
+                <Input
+                  id="password"
+                  placeholder="password"
+                  type="password"
+                  name="password"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full mt-2">
+                Login
+              </Button>
+            </form>
+          </div>
         </div>
-        <div>
-          <input type="password" name="password" id="" placeholder="Password" />
-        </div>
-        <div>
-          <input type="submit" value="Login" />
-        </div>
-      </form>
-    </main>
+      </div>
+      <div className="hidden bg-muted lg:block">
+        <Image
+          src="/placeholder.svg"
+          alt="Image"
+          width="1920"
+          height="1080"
+          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+      </div>
+    </div>
   );
 }
